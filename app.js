@@ -26,6 +26,11 @@ app.get('/api/v1/health', (req, res) => {
   res.status(200).json({ success: true, message: 'Server is healthy' });
 });
 
+// Root endpoint
+app.get('/', (req, res) => {
+  res.status(200).json({ success: true, message: 'Welcome to the Library Management System API' });
+});
+
 // Handle 404
 app.use((req, res, next) => {
   res.status(404).json({ success: false, message: 'Route not found' });
