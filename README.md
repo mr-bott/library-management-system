@@ -47,21 +47,74 @@ Features role-based access control (Librarian vs Member), secure authentication,
 All routes are prefixed with `/api/v1`
 
 ### Authentication (`/auth`)
-- `POST /register` - Register a new member.
-- `POST /login` - Login and receive Access + Refresh tokens.
-- `POST /refresh` - Use refresh token to get a new access token.
+
+**1. Register a new member**
+- `POST /register`
+- **Body:**
+  ```json
+  {
+    "name": "John Doe",
+    "email": "john@example.com",
+    "password": "password123"
+  }
+  ```
+
+**2. Login**
+- `POST /login`
+- **Body:**
+  ```json
+  {
+    "email": "john@example.com",
+    "password": "password123"
+  }
+  ```
+- **Response:** Returns `accessToken` and `refreshToken`.
+
+**3. Refresh Token**
+- `POST /refresh`
+- **Body:**
+  ```json
+  {
+    "token": "<your_refresh_token_here>"
+  }
+  ```
 
 ### Books (`/books`)
-- `GET /` - View all books. Supports `?page=1&limit=10`, `?search=title`, and `?category=Fiction`. (Publicly accessible if authenticated)
-- `GET /:id` - View specific book details.
-- `POST /` - Add a new book (Librarian only).
-- `PUT /:id` - Update a book (Librarian only).
-- `DELETE /:id` - Delete a book (Librarian only).
-- `POST /:id/borrow` - Borrow a book (Member only).
-- `POST /:id/return` - Return a book (Member only).
+
+**1. Get All Books**
+- `GET /`
+- Supports query parameters: `?page=1&limit=10`, `?search=title`, and `?category=Fiction`.
+
+**2. Add a New Book (Librarian Only)**
+- `POST /`
+- **Headers:** `Authorization: Bearer <accessToken>`
+- **Body:**
+  ```json
+  {
+    "title": "Clean Code",
+    "author": "Robert C. Martin",
+    "isbn": "978-0132350884",
+    "category": "Technology",
+    "quantity": 5,
+    "availableQuantity": 5
+  }
+  ```
+
+**3. Update a Book (Librarian Only)**
+- `PUT /:id`
+- **Body:** (Supports partial updates)
+  ```json
+  {
+    "quantity": 10
+  }
+  ```
+
+**4. Borrow / Return a Book (Member Only)**
+- `POST /:id/borrow`
+- `POST /:id/return`
 
 ### Members (`/members`)
-- `GET /` - List all members (Librarian only). Supports `?page=1&limit=10`.
+- `GET /` - List all members (Librarian only). Supports pagination.
 - `DELETE /:id` - Delete a member (Librarian only).
 - `GET /me/books` - View currently borrowed books (Member only).
 
